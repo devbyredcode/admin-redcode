@@ -1,0 +1,58 @@
+<%- include('../../component/head.ejs') %>
+<body class="light sidebar-mini sidebar-collapse">
+<%- include('../../component/loading-screen.ejs') %> 
+<div id="app">
+    <%- include('../../component/sidebar.ejs') %> 
+    <div class="has-sidebar-left has-sidebar-tabs">
+        <%- include('../../component/navbar.ejs') %> 
+        <div class="container-fluid relative animatedParent animateOnce my-3">
+            <div class="card mb-3 shadow no-b r-0">
+                <div class="card-header white">
+                    <h6>EDIT USERS</h6>
+                </div>
+                <div class="card card-body p-3 b-0">
+                    <form action="/admin/users/edit/<%= data._id %>?_method=PUT" method="POST" class="needs-validation" novalidate>
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="inputFirstName">First name</label>
+                                <input type="text" class="form-control" name="input_first_name" id="inputFirstName" placeholder="Type First name" value="<%= data.firstname %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="inputLastName">Last name</label>
+                                <input type="text" class="form-control" name="input_last_name" id="inputLastName" placeholder="Type Last name" value="<%= data.lastname %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputUsername">Username</label>
+                                <input type="text" class="form-control" name="input_username" id="inputUsername" placeholder="Type Username" value="<%= data.username %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                           <div class="col-md-12 mb-3">
+                                <label for="inputRoles">Roles</label>
+                                <select class="form-control" id="inputRoles" name="input_roles" required>
+                                    <option value="<%= data.roles %>" class="select-placeholder">
+                                        <% if(data.roles == 1){ %>
+                                            Super Admin
+                                        <% } else if(data.roles == 2) { %>
+                                            Admin
+                                        <% } else { %>
+                                            User
+                                        <% } %>
+                                    </option>
+                                    <option value="1">Super Admin</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">User</option>
+                                </select>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and choose one</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block mt-3" type="submit">EDIT USER</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="control-sidebar-bg shadow white fixed"></div>
+</div>
+<%- include('../../component/footer.ejs') %> 

@@ -1,0 +1,75 @@
+<%- include('../../component/head.ejs') %>
+<body class="light sidebar-mini sidebar-collapse">
+<%- include('../../component/loading-screen.ejs') %> 
+<div id="app">
+    <%- include('../../component/sidebar.ejs') %> 
+    <div class="has-sidebar-left has-sidebar-tabs">
+        <%- include('../../component/navbar.ejs') %> 
+        <div class="container-fluid relative animatedParent animateOnce my-3">
+            <div class="card mb-3 shadow no-b r-0">
+                <div class="card-header white">
+                    <h6>EDIT CASE STUDY</h6>
+                </div>
+                <div class="card card-body p-3 b-0">
+                    <form action="/admin/case-study/edit/<%= data._id %>?_method=PUT" method="POST" class="needs-validation" enctype="multipart/form-data" novalidate>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label for="inputFirstName">Image</label>
+                                <input type="file" class="form-control dropify" name="input_image" id="inputImage" data-max-file-size="5M" data-allowed-file-extensions="png jpg jpeg webp" placeholder="Type First name" value="">
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputUsername">Title</label>
+                                <input type="text" class="form-control" name="input_title" id="inputTitle" placeholder="Type Username" value="<%= data.title %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputUsername">Subtitle</label>
+                                <input type="text" class="form-control" name="input_subtitle" id="inputSubtitle" placeholder="Type Username" value="<%= data.subtitle %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputLastName">Client</label>
+                                <input type="text" class="form-control" name="input_client" id="inputClient" placeholder="Type Last name" value="<%= data.client %>" required>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and only use aplhabet</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputRoles">Category</label>
+                                <select class="form-control" id="inputCategory" name="input_category" required>
+                                    <option value="<%= data.category %>" class="select-placeholder"><%= data.category %></option>
+                                    <option value="1">Super Admin</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">User</option>
+                                </select>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and choose one</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputPassword">Client Problem</label>
+                                <textarea class="form-control" name="input_client_problem" id="inputCaseStudy1" placeholder="Type Client Problem" minlength="6" required><%= data.client_problem %></textarea>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and minimum 6 character</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputPassword">Client Brief</label>
+                                <textarea class="form-control" name="input_client_brief" id="inputCaseStudy2" placeholder="Type Client Brief" minlength="6" required><%= data.client_brief %></textarea>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and minimum 6 character</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputPassword">Our Solution</label>
+                                <textarea class="form-control" name="input_our_solution" id="inputCaseStudy3" placeholder="Type Client Brief" minlength="6" required><%= data.our_solution %></textarea>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and minimum 6 character</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="inputPassword">Our Result</label>
+                                <textarea class="form-control" name="input_our_result" id="inputCaseStudy4" placeholder="Type Client Brief" minlength="6" required><%= data.our_result %></textarea>
+                                <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and minimum 6 character</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block mt-3" type="submit">EDIT CASE STUDY</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="control-sidebar-bg shadow white fixed"></div>
+</div>
+<%- include('../../component/footer.ejs') %> 

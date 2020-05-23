@@ -1,0 +1,81 @@
+<%- include('../../component/head.ejs') %>
+<body class="light sidebar-mini sidebar-collapse">
+<%- include('../../component/loading-screen.ejs') %> 
+<div id="app">
+    <%- include('../../component/sidebar.ejs') %> 
+    <div class="has-sidebar-left has-sidebar-tabs">
+        <%- include('../../component/navbar.ejs') %> 
+        <div class="container-fluid relative animatedParent animateOnce my-3">
+            <div class="card mb-3 shadow no-b r-0">
+                <div class="card-header white">
+                    <h6>DATA STORY</h6>
+                </div>   
+                <div class="card-body b-0">
+                    <% if(alert.message != ""){ %> 
+                    <div role="alert" class="alert ml-3 mr-3 alert-<%= alert.status %>">
+                        <%= alert.message %>
+                    </div>
+                    <% } %> 
+                    <div class="card-title ml-3">
+                        <a href="/admin/story/add" class="btn btn-primary btn-sm" >+ ADD</a>
+                    </div>
+                    <table id="example2" class="table table-bordered table-hover data-tables"
+                        data-options='{ "paging": false; "searching":false}'>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Author</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% data != null && data.forEach(item => { %>
+                                <tr>
+                                    <td><%= item.title %></td>
+                                    <td><%= item.category %></td>
+                                    <td><%= item.author %></td>
+                                    <td>
+                                        <a href="/admin/story/edit/<%= item._id %>" class="btn btn-success btn-sm" title="Edit"><i class="icon-pencil"></i></a>
+                                        <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteStudyCase-<%= item._id %>" class="btn btn-danger btn-sm" title="Delete"><i class="s-12 icon-trash-o"></i></a>
+                                    </td>
+                                </tr>
+                                <div class="modal fade" id="deleteStudyCase-<%= item._id %>" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title">Delete</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <p>Are you sure want to delete data <strong><%= `${item.title}` %></strong></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <form action="/admin/story/delete/<%= item._id %>?_method=DELETE" method="POST">
+                                                <button type="submit" class="btn btn-primary">Delete</button>
+                                            </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Author</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="control-sidebar-bg shadow white fixed"></div>
+</div>
+<%- include('../../component/footer.ejs') %> 

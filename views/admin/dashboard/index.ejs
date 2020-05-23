@@ -1,0 +1,31 @@
+<%- include('../component/head.ejs') %>
+<body class="light sidebar-mini sidebar-collapse">
+<%- include('../component/loading-screen.ejs') %> 
+<div id="app">
+    <%- include('../component/sidebar.ejs') %> 
+    <div class="has-sidebar-left has-sidebar-tabs">
+        <%- include('../component/navbar.ejs') %> 
+        <div class="container-fluid relative animatedParent animateOnce my-3">
+            <div class="row statistic-item">
+                <% data.forEach(item => { %>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="card no-b mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><i class="icon icon-autorenew s-18"></i></div>
+                                    <!-- <div><span class="text-success">40+35</span></div> -->
+                                </div>
+                                <div class="text-center">
+                                    <div class="s-48 my-3 font-weight-lighter"><%= item.total %></div>
+                                    <%= item.name %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+    <div class="control-sidebar-bg shadow white fixed"></div>
+</div>
+<%- include('../component/footer.ejs') %> 
