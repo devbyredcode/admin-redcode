@@ -1,5 +1,5 @@
 const db_config = {
-    host : 'mongodb://localhost:27017/',
+    host : 'mongodb+srv://redcode:123roket@cluster0-d3bk1.mongodb.net/test?retryWrites=true&w=majority',
     name : 'db_redcode'
 }
 

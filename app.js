@@ -7,11 +7,9 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
-const db_config = require('./config/database');
 
 // DATABASE CONNECTION
-const option = `${db_config.host}${db_config.name}`
-mongoose.connect(option, {
+mongoose.connect('mongodb+srv://redcode:123roket@cluster0-d3bk1.mongodb.net/db_redcode?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
