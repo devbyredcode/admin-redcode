@@ -267,10 +267,13 @@ module.exports = {
         });
     },
 
-    viewAddCaseStudy : (req, res) => {
+    viewAddCaseStudy : async (req, res) => {
+        const category = await Category.find({ type: 'Case Study'});
+
         res.render('admin/dashboard/case-study/add', {
             title : 'Admin | Case Study',
-            page_name : 'Case Study'
+            page_name : 'Case Study',
+            category
         });
     },
 
@@ -293,8 +296,9 @@ module.exports = {
                 image : input_image,
                 client : input_client,
                 category : input_category,
-                title : input_title,
-                subtitle : input_subtitle,
+                title : netralizeInput(input_title),
+                slug: slugGenerator(input_title),
+                subtitle : netralizeInput(input_subtitle),
                 client_brief : input_client_brief,
                 client_problem : input_client_problem,
                 our_solution : input_our_solution,
@@ -312,11 +316,13 @@ module.exports = {
     viewEditCaseStudy : async (req, res) => {
         const { id } = req.params;
         const data = await CaseStudy.findOne({ _id : id });
+        const category = await Category.find({ type: 'Case Study'});
 
         res.render('admin/dashboard/case-study/edit', {
             title : 'Admin | Case Study',
             page_name : 'Case Study',
-            data
+            data,
+            category
         });
     },
 
@@ -340,8 +346,9 @@ module.exports = {
                 data.image = req.file.filename;
             }
             
-            data.title = input_title,
-            data.subtitle = input_subtitle,
+            data.title = netralizeInput(input_title),
+            data.slug = slugGenerator(input_title),
+            data.subtitle = netralizeInput(input_subtitle),
             data.client = input_client,
             data.category = input_category,
             data.client_problem = input_client_problem,
@@ -390,10 +397,12 @@ module.exports = {
         });
     },
 
-    viewAddStory : (req, res) => {
+    viewAddStory : async (req, res) => {
+        const category = await Category.find({ type: 'Story'});
         res.render('admin/dashboard/story/add', {
             title : 'Admin | Story',
             page_name : 'Story',
+            category
         });
     },
 
@@ -410,7 +419,8 @@ module.exports = {
         await Story.create({
             image : input_image,
             author : input_author,
-            title : input_title,
+            title : netralizeInput(input_title),
+            slug: slugGenerator(input_title),
             category : input_category,
             detail : input_detail
         });
@@ -422,11 +432,13 @@ module.exports = {
     viewEditStory : async (req, res) => {
         const { id } = req.params;
         const data = await Story.findOne({ _id : id });
+        const category = await Category.find({ type: 'Story'});
 
         res.render('admin/dashboard/story/edit', {
             title : 'Admin | Story',
             page_name : 'Story',
-            data
+            data,
+            category
         });
     },
 
@@ -446,7 +458,8 @@ module.exports = {
                 data.image = req.file.filename;
             }
             data.author = input_author
-            data.title = input_title,
+            data.title = netralizeInput(input_title),
+            data.slug = slugGenerator(input_title),
             data.category = input_category,
             data.detail = input_detail
             data.save();
@@ -493,10 +506,13 @@ module.exports = {
         });
     },
 
-    viewAddPlayground : (req, res) => {
+    viewAddPlayground : async (req, res) => {
+        const category = await Category.find({ type: 'Playground'});
+
         res.render('admin/dashboard/playground/add', {
             title : 'Admin | Playground',
             page_name : 'Playground',
+            category
         });
     },
 
@@ -513,7 +529,7 @@ module.exports = {
         await Playground.create({
             image : input_image,
             author : input_author,
-            title : input_title,
+            title : netralizeInput(input_title),
             category : input_category,
             link : input_link
         });
@@ -525,11 +541,13 @@ module.exports = {
     viewEditPlayground : async (req, res) => {
         const { id } = req.params;
         const data = await Playground.findOne({ _id : id });
+        const category = await Category.find({ type: 'Story'});
 
         res.render('admin/dashboard/playground/edit', {
             title : 'Admin | Playground',
             page_name : 'Playground',
-            data
+            data,
+            category
         });
     },
 
@@ -550,7 +568,7 @@ module.exports = {
                 data.image = req.file.filename;
             }
             data.author = input_author
-            data.title = input_title,
+            data.title = netralizeInput(input_title),
             data.category = input_category,
             data.link = input_link
             data.save();
@@ -623,4 +641,9 @@ const netralizeInput = (params) => {
 const showNotification = (req, message, status) => {
     req.flash('alert_message', message);
     req.flash('alert_status', netralizeInput(status));
+}
+
+const slugGenerator = (string) => {
+    const str = netralizeInput(string);
+    return str.split(' ').join('-');
 }

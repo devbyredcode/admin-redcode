@@ -37,9 +37,9 @@
                                 <label for="inputRoles">Category</label>
                                 <select class="form-control" id="inputCategory" name="input_category" required>
                                     <option value="<%= data.category %>" class="select-placeholder"><%= data.category %></option>
-                                    <option value="1">Super Admin</option>
-                                    <option value="2">Admin</option>
-                                    <option value="3">User</option>
+                                    <% category.forEach(item => { %>
+                                        <option value="<%= item.name %>"><%= item.name %></option>
+                                    <% }) %>
                                 </select>
                                 <div class="valid-feedback">Form valid</div><div class="invalid-feedback">Dont let it empty and choose one</div>
                             </div>
