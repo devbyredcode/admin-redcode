@@ -21,27 +21,28 @@ router.delete('/category/delete/:id', AdminController.deleteDataCategory);
 
 router.get('/case-study', AdminController.viewDataCaseStudy);
 router.get('/case-study/add', AdminController.viewAddCaseStudy);
-router.post('/case-study/add', uploadCaseStudy, AdminController.addDataCaseStudy);
+router.post('/case-study/add', AdminController.addDataCaseStudy);
 router.get('/case-study/edit/:id', AdminController.viewEditCaseStudy);
-router.put('/case-study/edit/:id', uploadCaseStudy, AdminController.editDataCaseStudy);
+router.put('/case-study/edit/:id', AdminController.editDataCaseStudy);
 router.delete('/case-study/delete/:id', AdminController.deleteDataCaseStudy);
 
 router.get('/story', AdminController.viewDataStory);
 router.get('/story/add', AdminController.viewAddStory);
-router.post('/story/add', uploadStory, AdminController.addDataStory);
+router.post('/story/add', AdminController.addDataStory);
 router.get('/story/edit/:id', AdminController.viewEditStory);
-router.put('/story/edit/:id', uploadStory, AdminController.editDataStory);
+router.put('/story/edit/:id', AdminController.editDataStory);
 router.delete('/story/delete/:id', AdminController.deleteDataStory);
 
 router.get('/playground', AdminController.viewDataPlayground);
 router.get('/playground/add', AdminController.viewAddPlayground);
-router.post('/playground/add',  uploadPlayground, AdminController.addDataPlayground);
+router.post('/playground/add',  AdminController.addDataPlayground);
 router.get('/playground/edit/:id', AdminController.viewEditPlayground);
-router.put('/playground/edit/:id',  uploadPlayground, AdminController.editDataPlayground);
+router.put('/playground/edit/:id',  AdminController.editDataPlayground);
 router.delete('/playground/delete/:id', AdminController.deleteDataPlayground);
 
 router.get('/image', AdminController.viewDataImage);
 router.get('/image/add', AdminController.viewAddImage);
-router.post('/image/add', uploadOtherImage, AdminController.addDataImage);
+router.post('/image/add', AdminController.addDataImage);
+router.delete('/image/delete/:id', AdminController.deleteDataImage);
 
 module.exports = router;

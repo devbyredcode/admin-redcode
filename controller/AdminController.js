@@ -5,6 +5,7 @@ const CaseStudy = require('../model/CaseStudy');
 const Story = require('../model/Story');
 const Playground = require('../model/Playground');
 const Image = require('../model/Image');
+const cloudinary = require('cloudinary').v2;
 const fs = require('fs-extra');
 const path = require('path');
 const salt = bcrypt.genSaltSync(10);
@@ -290,25 +291,27 @@ module.exports = {
                 input_our_result
             } = req.body;
     
-            const input_image = req.file.filename;
-    
-            await CaseStudy.create({
-                image : input_image,
-                client : input_client,
-                category : input_category,
-                title : netralizeInput(input_title),
-                slug: slugGenerator(input_title),
-                subtitle : netralizeInput(input_subtitle),
-                client_brief : input_client_brief,
-                client_problem : input_client_problem,
-                our_solution : input_our_solution,
-                our_result : input_our_result
-            });
-    
-            showNotification(req, "Success Add Case Study", "success");
-            res.redirect('/admin/case-study');
+            const input_image = req.files;
+            
+            cloudinary.uploader.upload(input_image.input_image.tempFilePath, async function(error, result) {        
+                await CaseStudy.create({
+                    image : getImageName(result.secure_url),
+                    client : input_client,
+                    category : input_category,
+                    title : netralizeInput(input_title),
+                    slug: slugGenerator(input_title),
+                    subtitle : netralizeInput(input_subtitle),
+                    client_brief : input_client_brief,
+                    client_problem : input_client_problem,
+                    our_solution : input_our_solution,
+                    our_result : input_our_result
+                });
+
+                showNotification(req, "Success Add Case Study", "success");
+                res.redirect('/admin/case-study');
+            });          
         } catch (err) {
-            showNotification(req, "Error Add Case Study", "danger");
+            showNotification(req, `${err.message} Error Add Case Study`, "danger");
             res.redirect('/admin/case-study');
         }        
     },
@@ -341,24 +344,46 @@ module.exports = {
             } = req.body;
 
             const data = await CaseStudy.findOne({ _id : id });   
-            if(req.file != null){
-                await fs.unlink(path.join(`public/img/upload/case-study/${data.image}`));
-                data.image = req.file.filename;
+            const newFiles = req.files;
+
+            if(newFiles != null){
+                cloudinary.uploader.destroy(getImageID(data.image), function(err, result){
+                            
+                });
+
+                cloudinary.uploader.upload(newFiles.input_image.tempFilePath, function(error, result) {  
+                    console.log('RESULT UPLOADER', result);      
+                    data.image = getImageName(result.secure_url),
+                    data.title = netralizeInput(input_title),
+                    data.slug = slugGenerator(input_title),
+                    data.subtitle = netralizeInput(input_subtitle),
+                    data.client = input_client,
+                    data.category = input_category,
+                    data.client_problem = input_client_problem,
+                    data.client_brief = input_client_brief,
+                    data.our_solution = input_our_solution,
+                    data.our_result = input_our_result
+                    data.save();
+                    
+                    showNotification(req, "Success Update Case Study", "success");
+                    res.redirect('/admin/case-study');
+                });  
+            }else{
+                data.title = netralizeInput(input_title),
+                data.slug = slugGenerator(input_title),
+                data.subtitle = netralizeInput(input_subtitle),
+                data.client = input_client,
+                data.category = input_category,
+                data.client_problem = input_client_problem,
+                data.client_brief = input_client_brief,
+                data.our_solution = input_our_solution,
+                data.our_result = input_our_result
+                data.save();
+                
+                showNotification(req, "Success Update Case Study", "success");
+                res.redirect('/admin/case-study');
             }
             
-            data.title = netralizeInput(input_title),
-            data.slug = slugGenerator(input_title),
-            data.subtitle = netralizeInput(input_subtitle),
-            data.client = input_client,
-            data.category = input_category,
-            data.client_problem = input_client_problem,
-            data.client_brief = input_client_brief,
-            data.our_solution = input_our_solution,
-            data.our_result = input_our_result
-            data.save();
-
-            showNotification(req, "Success Update Case Study", "success");
-            res.redirect('/admin/case-study');
         } catch (err) {
             console.log('ERROR KESINI');
             showNotification(req, `Failed Update Case Study ${err.message}`, "danger");
@@ -369,12 +394,13 @@ module.exports = {
     deleteDataCaseStudy : async (req, res) => {
         const { id } = req.params;
         const data = await CaseStudy.findOne({ _id : id });
-
-        await fs.unlink(path.join(`public/img/upload/case-study/${data.image}`));
-        await data.remove();
         
-        showNotification(req, "Success Delete Case Study", "success");
-        res.redirect('/admin/case-study');
+        cloudinary.uploader.destroy(getImageID(data.image), async function(err, result){
+            await data.remove();
+
+            showNotification(req, "Success Delete Case Study", "success");
+            res.redirect('/admin/case-study');
+        });
     },
     // CASE STUDY FUNCTION
     
@@ -414,19 +440,22 @@ module.exports = {
             input_detail
         } = req.body;
 
-        const input_image = req.file.filename;
+        // const input_image = req.file.filename;
+        const input = req.files;
 
-        await Story.create({
-            image : input_image,
-            author : input_author,
-            title : netralizeInput(input_title),
-            slug: slugGenerator(input_title),
-            category : input_category,
-            detail : input_detail
+        cloudinary.uploader.upload(input.input_image.tempFilePath, async function(error, result) {        
+            await Story.create({
+                image : getImageName(result.secure_url),
+                author : input_author,
+                title : netralizeInput(input_title),
+                slug: slugGenerator(input_title),
+                category : input_category,
+                detail : input_detail
+            });
+
+            showNotification(req, "Success Add Story", "success");
+            res.redirect('/admin/playground');
         });
-
-        showNotification(req, "Success Add Story", "success");
-        res.redirect('/admin/story');
     },
 
     viewEditStory : async (req, res) => {
@@ -453,19 +482,36 @@ module.exports = {
             } = req.body;
 
             const data = await Story.findOne({ _id : id });
-            if(req.file != null){
-                await fs.unlink(path.join(`public/img/upload/story/${data.image}`));
-                data.image = req.file.filename;
-            }
-            data.author = input_author
-            data.title = netralizeInput(input_title),
-            data.slug = slugGenerator(input_title),
-            data.category = input_category,
-            data.detail = input_detail
-            data.save();
+            const newFiles = req.files;
+            
+            if(newFiles != null){
+                cloudinary.uploader.destroy(getImageID(data.image), function(err, result){
+                            
+                });
 
-            showNotification(req, "Success Edit Story", "success");
-            res.redirect('/admin/story');
+                cloudinary.uploader.upload(newFiles.input_image.tempFilePath, function(error, result) {  
+                    data.image = getImageName(result.secure_url),
+                    data.author = input_author
+                    data.title = netralizeInput(input_title),
+                    data.slug = slugGenerator(input_title),
+                    data.category = input_category,
+                    data.detail = input_detail
+                    data.save();
+                    
+                    showNotification(req, "Success Update Case Study", "success");
+                    res.redirect('/admin/case-study');
+                });  
+            }else{
+                data.author = input_author
+                data.title = netralizeInput(input_title),
+                data.slug = slugGenerator(input_title),
+                data.category = input_category,
+                data.detail = input_detail
+                data.save();
+                
+                showNotification(req, "Success Update Case Study", "success");
+                res.redirect('/admin/case-study');
+            }
         } catch (err) {
             showNotification(req, `ailed Edit Story ${err.message}`, "success");
             res.redirect('/admin/story');
@@ -477,11 +523,12 @@ module.exports = {
             const { id } = req.params;
             const data = await Story.findOne({ _id : id });
             
-            fs.unlink(path.join(`public/img/upload/story/${data.image}`));
-            data.remove();
-    
-            showNotification(req, "Success Delete Story", "success");
-            res.redirect('/admin/story');
+            cloudinary.uploader.destroy(getImageID(data.image), async function(err, result){
+                await data.remove();
+                
+                showNotification(req, "Success Delete Story", "success");
+                res.redirect('/admin/story');
+            });
         } catch (err) {
             showNotification(req, `Failed Delete Story ${err.message}`, "success");
             res.redirect('/admin/story');
@@ -524,18 +571,21 @@ module.exports = {
             input_link
         } = req.body;
 
-        const input_image = req.file.filename;
+        // const input_image = req.file.filename;
+        const input = req.files;
 
-        await Playground.create({
-            image : input_image,
-            author : input_author,
-            title : netralizeInput(input_title),
-            category : input_category,
-            link : input_link
+        cloudinary.uploader.upload(input.input_image.tempFilePath, async function(error, result) {        
+            await Playground.create({
+                image : getImageName(result.secure_url),
+                author : input_author,
+                title : netralizeInput(input_title),
+                category : input_category,
+                link : input_link
+            });
+            
+            showNotification(req, "Success Add Story", "success");
+            res.redirect('/admin/playground');
         });
-
-        showNotification(req, "Success Add Story", "success");
-        res.redirect('/admin/playground');
     },
 
     viewEditPlayground : async (req, res) => {
@@ -562,19 +612,34 @@ module.exports = {
             } = req.body;
 
             const data = await Playground.findOne({ _id : id });
+            const newFiles = req.files;
             
-            if(req.file != null){
-                await fs.unlink(path.join(`public/img/upload/playground/${data.image}`));
-                data.image = req.file.filename;
-            }
-            data.author = input_author
-            data.title = netralizeInput(input_title),
-            data.category = input_category,
-            data.link = input_link
-            data.save();
+            if(newFiles != null){
+                cloudinary.uploader.destroy(getImageID(data.image), function(err, result){
+                            
+                });
 
-            showNotification(req, "Success Edit Story", "success");
-            res.redirect('/admin/playground');
+                cloudinary.uploader.upload(newFiles.input_image.tempFilePath, function(error, result) {  
+                    data.image = getImageName(result.secure_url),
+                    data.author = input_author,
+                    data.title = netralizeInput(input_title),
+                    data.category = input_category,
+                    data.link = input_link
+                    data.save();
+                    
+                    showNotification(req, "Success Edit Story", "success");
+                    res.redirect('/admin/playground');
+                });  
+            }else{
+                data.author = input_author
+                data.title = netralizeInput(input_title),
+                data.category = input_category,
+                data.link = input_link
+                data.save();
+                
+                showNotification(req, "Success Edit Story", "success");
+                res.redirect('/admin/playground');
+            }
         } catch (err) {
             showNotification(req, `ailed Edit Story ${err.message}`, "success");
             res.redirect('/admin/playground');
@@ -586,11 +651,12 @@ module.exports = {
             const { id } = req.params;
             const data = await Playground.findOne({ _id : id });
 
-            fs.unlink(path.join(`public/img/upload/Playground/${data.image}`));
-            data.remove();
-
-            showNotification(req, "Success Delete Playground", "success");
-            res.redirect('/admin/playground');
+            cloudinary.uploader.destroy(getImageID(data.image), async function(err, result){
+                await data.remove();
+                
+                showNotification(req, "Success Delete Playground", "success");
+                res.redirect('/admin/playground');
+            });
         } catch (err) {
             showNotification(req, `Failed Delete Playground ${err.message}`, "danger");
             res.redirect('/admin/playground');
@@ -623,15 +689,33 @@ module.exports = {
     },
 
     addDataImage : async (req, res) => {
-        const input_image = req.file.filename;
+        const input = req.files;
+        cloudinary.uploader.upload(input.input_image.tempFilePath, async function(error, result) {        
+            await Image.create({
+                name : getImageName(result.secure_url)
+            });  
 
-        await Image.create({
-            name : input_image
+            showNotification(req, "Success Add Image", "success");
+            res.redirect('/admin/image');
         });
-
-        showNotification(req, "Success Add Image", "success");
-        res.redirect('/admin/image');
     },
+
+    deleteDataImage : async (req, res) => {
+        try {
+            const { id } = req.params;
+            const data = await Image.findOne({ _id : id });
+
+            cloudinary.uploader.destroy(getImageID(data.name), async function(err, result){
+                await data.remove();
+                
+                showNotification(req, "Success Delete Image", "success");
+                res.redirect('/admin/image');
+            });
+        } catch (err) {
+            showNotification(req, `Failed Delete Playground ${err.message}`, "danger");
+            res.redirect('/admin/image');
+        }
+    }
 }
 
 const netralizeInput = (params) => {
@@ -646,4 +730,20 @@ const showNotification = (req, message, status) => {
 const slugGenerator = (string) => {
     const str = netralizeInput(string);
     return str.split(' ').join('-');
+}
+
+const getImageName = (param) => {
+    let string = param.split('/');
+    let imageName = `${string[6]}/${string[7]}`;
+
+    return imageName;
+}
+
+const getImageID = (param) => {
+    console.log(param);
+    const splitName = param.split('/');
+    console.log(splitName);
+    const splitID = splitName[1].split('.');
+
+    return splitID[0];
 }

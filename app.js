@@ -6,10 +6,22 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const fileupload = require('express-fileupload');
 const flash = require('connect-flash');
+const db_config = require('./config/database');
+const cloudinary = require('cloudinary').v2;
+
+// CLOUDINARY CONFIG
+//CLOUDINARY_URL=cloudinary://755336265882271:g1BvjZs_Gm6l8uGBEzmYqCAXnZU@devbyredcode
+cloudinary.config({ 
+  cloud_name: 'devbyredcode', 
+  api_key: '755336265882271', 
+  api_secret: 'g1BvjZs_Gm6l8uGBEzmYqCAXnZU' 
+});
 
 // DATABASE CONNECTION
-mongoose.connect('mongodb+srv://redcode:123roket@cluster0-d3bk1.mongodb.net/db_redcode?retryWrites=true&w=majority', {
+const option = `${db_config.host}${db_config.name}`
+mongoose.connect(option, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
@@ -32,6 +44,10 @@ app.use(session({
   resave : false,
   saveUninitialized : true,
   cookie : { maxAge: 60000 }
+}));
+
+app.use(fileupload({
+  useTempFiles: true
 }));
 
 app.use(flash());
